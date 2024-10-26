@@ -13,7 +13,7 @@ import java.util.Optional;
 @Transactional
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
-    @Autowired
+
     public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
@@ -74,6 +74,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean existsByIdentificationNumber(String identificationNumber) {
+        if (identificationNumber == null || identificationNumber.trim().isEmpty()) {
+            throw new IllegalArgumentException("Identification number cannot be null or empty");
+        }
         return userRepository.findByIdentificationNumber(identificationNumber) != null;
     }
+
 }

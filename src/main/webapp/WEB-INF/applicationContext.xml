@@ -14,11 +14,6 @@
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <!-- Enable component scanning -->
-    <context:component-scan base-package="com.demo.technova">
-        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
-    </context:component-scan>
-
     <!-- Property placeholder for database properties -->
     <context:property-placeholder location="classpath:database.properties"/>
 
@@ -34,6 +29,7 @@
         <property name="validationQuery" value="SELECT 1"/>
         <property name="testOnBorrow" value="true"/>
     </bean>
+
     <!-- Entity Manager Factory -->
     <bean id="entityManagerFactory"
           class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
@@ -67,9 +63,14 @@
     <!-- Enable Transaction Management -->
     <tx:annotation-driven transaction-manager="transactionManager"/>
 
-    <!-- Enable JPA Repositories -->
-    <jpa:repositories base-package="com.demo.technova.repository"/>
+    <!-- Repository Bean -->
+    <bean id="userRepository" class="com.demo.technova.repository.ConcreteUserRepository">
+        <property name="entityManagerFactory" ref="entityManagerFactory"/>
+    </bean>
 
-<!--    <bean id="userService" class="com.demo.technova.service.Implementations.UserServiceImpl"/>-->
+    <!-- Service Bean -->
+    <bean id="userService" class="com.demo.technova.service.Implementations.UserServiceImpl">
+        <constructor-arg ref="userRepository"/>
+    </bean>
 
 </beans>
