@@ -2,15 +2,19 @@ package com.demo.technova.controller;
 
 import com.demo.technova.model.User;
 import com.demo.technova.service.Interfaces.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 @Controller
 @RequestMapping("/users")
+@Slf4j
 public class UserController {
     private final UserService userService;
 
@@ -27,18 +31,31 @@ public class UserController {
     @GetMapping("/new")
     public String showCreateForm(Model model) {
         model.addAttribute("user", new User());
-        return "users/form";
+        return "users/add";
     }
 
     @PostMapping
-    public String createUser(@ModelAttribute User user, RedirectAttributes redirectAttributes) {
+    public String createUser(@ModelAttribute("user") User user,
+                             Model model,
+                             RedirectAttributes redirectAttributes) {
+        // Add debug logging
+        log.info("Received user data: {}", user);
+        log.info("Registration date: {}", user.getRegistrationDate());
+        log.info("Expiration date: {}", user.getExpirationDate());
+
         try {
-            userService.createUser(user);
+            if (user.getRegistrationDate() == null) {
+                user.setRegistrationDate(LocalDate.now());
+            }
+
+            User savedUser = userService.createUser(user);
+            log.info("Successfully created user: {}", savedUser);
             redirectAttributes.addFlashAttribute("message", "User created successfully!");
             return "redirect:/users";
-        } catch (IllegalStateException e) {
-            redirectAttributes.addFlashAttribute("error", e.getMessage());
-            return "redirect:/users/new";
+        } catch (Exception e) {
+            log.error("Error creating user: ", e);
+            model.addAttribute("error", e.getMessage());
+            return "users/add";
         }
     }
 
