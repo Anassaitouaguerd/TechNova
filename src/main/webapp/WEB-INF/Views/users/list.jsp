@@ -89,6 +89,26 @@
             color: #2ecc71;
         }
 
+        .button-container {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .add-user-button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .add-user-button:hover {
+            background-color: #2980b9;
+        }
+
         /* Responsive design */
         @media (max-width: 768px) {
             body {
@@ -132,7 +152,9 @@
 </head>
 <body>
 <h1>User List</h1>
-
+<div class="button-container">
+    <button class="add-user-button" onclick="window.location.href = '/users/new'">Add New User</button>
+</div>
 <table>
     <thead>
     <tr>
